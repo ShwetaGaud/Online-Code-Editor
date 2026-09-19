@@ -1,0 +1,258 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+/* General Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f9fafc;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    scroll-behavior: smooth;
+}
+
+/* Header Navigation */
+header {
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    gap: 20px;
+}
+
+.navbar a {
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    padding: 10px 15px;
+    transition: 0.3s;
+}
+
+.navbar a:hover {
+    color: #ff5733;
+    transform: scale(1.1);
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 120px 20px;
+    background: linear-gradient(to right, #ff5733, #ff8c42);
+    color: white;
+}
+
+.hero h1 {
+    font-size: 60px;
+    font-weight: 700;
+}
+
+.hero p {
+    font-size: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Start Coding Button */
+.start-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    font-size: 24px;
+    color: white;
+    background: #1a1a2e;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+.start-btn:hover {
+    background: #00b4d8;
+    transform: scale(1.1);
+}
+
+/* Features Section */
+.features {
+    padding: 80px 10px;
+    text-align: center;
+    background: white;
+}
+
+.features h2 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 20px;
+}
+
+.feature-box {
+    display: inline-block;
+    max-width: 280px;
+    margin: 20px;
+    padding: 25px;
+    background: white;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border-radius: 12px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.feature-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.2);
+    background: #ff5733;
+    color: white;
+}
+
+/* Languages Section */
+.languages {
+    padding: 80px 10px;
+    text-align: center;
+    background: #f0f0f0;
+}
+
+.languages h2 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.language-box {
+    display: inline-block;
+    max-width: 250px;
+    margin: 20px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border-radius: 12px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.language-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.2);
+    background: #0077b6;
+    color: white;
+}
+
+/* How It Works Section */
+.how-it-works {
+    padding: 80px 10px;
+    text-align: center;
+    background: white;
+}
+
+.how-it-works h2 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+/* Contact Section */
+.contact {
+    padding: 80px 10px;
+    text-align: center;
+    background: #1a1a2e;
+    color: white;
+}
+
+.contact h2 {
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.contact p {
+    font-size: 18px;
+    max-width: 600px;
+    margin: 10px auto;
+}
+
+/* Login Button in Navbar */
+.login-btn {
+    background: #1a1a2e;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background: #00b4d8;
+    transform: scale(1.1);
+}
+
+/* Get Started Section */
+.get-started {
+    text-align: center;
+    padding: 80px 10px;
+    background: #f0f0f0;
+}
+
+.get-started h2 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.get-started p {
+    font-size: 18px;
+    max-width: 600px;
+    margin: 0 auto 20px;
+    color: #333;
+}
+
+.signup-btn, .login-btn {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 8px;
+    text-decoration: none;
+    margin: 10px;
+    transition: 0.3s;
+}
+
+.signup-btn {
+    background: #ff5733;
+    color: white;
+}
+
+.signup-btn:hover {
+    background: #ff8c42;
+    transform: scale(1.1);
+}
+
+.login-btn {
+    background: #1a1a2e;
+    color: white;
+}
+
+.login-btn:hover {
+    background: #00b4d8;
+    transform: scale(1.1);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #16213e;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}

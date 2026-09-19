@@ -1,0 +1,448 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Code Editor | Online Code Editor</title>
+
+    <!-- Ace Editor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/ext-language_tools.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .wrapper {
+            display: flex;
+            width: 100%;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+        
+        .sidebar h3 {
+            text-align: center;
+        }
+        
+        .sidebar a {
+            text-decoration: none;
+            color: white;
+            padding: 10px;
+            display: block;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Logout Button */
+        .logout-btn {
+            margin-top: auto;
+            background-color: #dc3545;
+            border: none;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            flex-grow: 1;
+            padding: 20px;
+        }        
+
+        .editor-container {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .editor-box {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .editor {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ccc;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+        }
+
+        .output-area {
+            margin-top: 20px;
+            background-color: #f7f7f7;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            min-height: 100px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        /* Fix Editor Visibility */
+        #code-editor {
+            height: 400px !important;
+            width: 100% !important;
+            display: block !important;
+            border: 1px solid #ccc;
+        }
+
+        .error-box {
+            background-color: #ffcccc;
+            color: #900;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+            font-weight: bold';
+        }
+    </style>
+</head>
+
+<body>
+    {% csrf_token %}
+    
+    <div class="wrapper">
+        <!-- Sidebar Section -->
+        <div class="sidebar">
+            <h3>Editor Options</h3>
+            <a href="#" id="runBtn">Run Code</a>
+            <a href="#" id="saveBtn">Save Code</a>
+            <a href="#" id="uploadBtn">Upload File</a>
+            <a href="#" id="themeBtn">Toggle Theme</a>
+            <a href="{% url 'logout' %}" class="btn logout-btn">Logout</a>
+        </div>
+
+        <!-- Main Editor Section -->
+        <div class="main-content">
+            <div class="container">
+                <div class="editor-container">
+                    <div class="editor-box">
+                        <div class="btn-container" id="toolbar">
+                            <select id="language-select" class="form-select" style="max-width: 200px;">
+                                <option value="python">Python</option>
+                                <option value="java">Java</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="cpp">C++</option>
+                                <option value="php">PHP</option>
+                            </select>
+
+                            <button id="run_code" class="btn btn-primary">Run Code</button>
+                            <button onclick="toggleTheme()">Toggle Theme</button>
+
+                            <!-- File Upload and Download Buttons -->
+                            <input type="file" id="fileInput">
+                            <button onclick="downloadCode()">Download Code</button>
+                        </div>
+
+                        <!-- Code Editor -->
+                        <div id="editor" style="height: 400px; width: 100%;"></div>
+                        <p id="autosave-status" style="color: gray; font-size: 14px;"></p>
+
+                        <!-- User Input box -->
+                        <label for="user-input">User Input:</label>
+                        <textarea id="user-input" placeholder="Enter input for the program..."></textarea>
+
+                        <div class="output-area">
+                            <h4>Output</h4>
+                            <pre id="output-text"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        document.getElementById("runBtn").addEventListener("click", function() {
+            document.getElementById("run_code").click();
+        });
+
+        document.getElementById("saveBtn").addEventListener("click", function() {
+            alert("Code Saved Successfully!");
+        });
+
+        document.getElementById("uploadBtn").addEventListener("click", function() {
+            document.getElementById("fileInput").click();
+        });
+
+        document.getElementById("themeBtn").addEventListener("click", function() {
+            toggleTheme();
+        });
+
+        function toggleTheme() {
+            let editor = document.getElementById("editor");
+            if (editor.style.backgroundColor === "black") {
+                editor.style.backgroundColor = "white";
+                editor.style.color = "black";
+            } else {
+                editor.style.backgroundColor = "black";
+                editor.style.color = "white";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize Ace Editor
+            const editor = ace.edit("editor");
+            editor.setTheme("ace/theme/monokai"); // Change theme if needed
+            editor.session.setMode("ace/mode/python"); // Default language
+            editor.setShowPrintMargin(false);
+
+            // Auto-Completion & Syntax Checking
+            ace.require("ace/ext/language_tools");
+            editor.setOptions({
+                enableLiveAutocompletion: true,
+                enableBasicAutocompletion: true,
+                enableSnippets: true
+            });
+
+            console.log("Ace Editor Initialized successfully!");
+
+            // real-time error handling
+            editor.getSession().on("changeAnnotation", function () {
+                var annotations = editor.getSession().getAnnotations();
+                var errorBox = document.getElementById("error-message"); 
+
+                if (annotations.length > 0) {
+                    errorBox.innerHTML = `<strong>Error:</strong> ${annotations[0].text}`;
+                    errorBox.style.display = "block";
+                } else {
+                    errorBox.style.display = "none";
+                }
+            });
+
+            document.getElementById("run_code").addEventListener("click", function () {
+                const code = editor.getValue();
+                const language = document.getElementById("language-select").value;
+                const userInput = document.getElementById("user-input").value;
+                const outputElement = document.getElementById("output-text");
+            
+                if (!code) {
+                    alert("Please enter code before running.");
+                    return;
+                }
+
+                outputElement.innerText = "⏳ Running..."; // Show running status
+            
+                fetch("/run_code/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken") //  CSRF token is included
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        language: language,
+                        user_input: userInput
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        outputElement.innerText = `${data.error}`;
+                    } else {
+                        outputElement.innerText = `\n${data.output}`;
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    outputElement.innerText = "❌ Error running code. Check server!";
+                });
+            });
+            
+
+            window.toggleTheme = function () {
+                var currentTheme = editor.getTheme();
+                var newTheme = currentTheme === "ace/theme/monokai" ? "ace/theme/github" : "ace/theme/monokai";
+                editor.setTheme(newTheme);
+                console.log("Theme changed to:", newTheme);
+            }
+
+            window.downloadCode = function () {
+                var code = editor.getValue();
+                var blob = new Blob([code], {type: 'text/plain'});
+                var link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'code.txt';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                console.log("Code downloaded");
+            }
+        
+            document.addEventListener("DOMContentLoaded", function() {
+                const savedTheme = localStorage.getItem("editorTheme") || "ace/theme/monokai";
+                editor.setTheme(savedTheme);
+            });
+
+            // File Upload and Load into Editor
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    editor.setValue(event.target.result, -1);
+                };
+                reader.readAsText(file);
+            });
+
+            async function autosaveCode() {
+                const code = editor.getValue();
+                const language = document.getElementById("language-select").value;
+            
+                try {
+                    const response = await fetch('/autosave/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCSRFToken()
+                        },
+                        body: JSON.stringify({ code: code, language: language })
+                    });
+            
+                    const data = await response.json();
+            
+                    if (!response.ok) {
+                        console.error("Autosave failed:", data.message);
+                        displayAutosaveStatus(`❌ Error: ${data.message}`, "error");
+                    } else {
+                        console.log("Autosave successful:", data.message);
+                        displayAutosaveStatus("✅ Code autosaved!", "success");
+                    }
+            
+                } catch (error) {
+                    console.error("Autosave request failed:", error);
+                    displayAutosaveStatus("❌ Network error. Check server!", "error");
+                }
+            }
+            
+            // Function to show autosave status in the editor
+            function displayAutosaveStatus(message, type) {
+                let statusElement = document.getElementById("autosave-status");
+                if (!statusElement) return;
+            
+                statusElement.innerText = message;
+                statusElement.style.color = type === "success" ? "green" : "red";
+            
+                // Hide message after 3 seconds
+                setTimeout(() => { statusElement.innerText = ""; }, 3000);
+            }
+            
+            // Ensure the CSRF token is available
+            function getCSRFToken() {
+                return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            }
+            
+            // Run autosave every 10 seconds
+            setInterval(autosaveCode, 10000);
+            
+        
+
+            // Detect Language Change
+            document.getElementById('language-select').addEventListener('change', function () {
+                const language = this.value;
+                let mode = "ace/mode/plain_text";
+                if (language === "python") mode = "ace/mode/python";
+                else if (language === "java") mode = "ace/mode/java";
+                else if (language === "javascript") mode = "ace/mode/javascript";
+                else if (language === "cpp") mode = "ace/mode/c_cpp";
+                else if (language === "php") mode = "ace/mode/php";
+                editor.session.setMode(mode);
+            });
+
+        
+        // CSRF Token function
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + "=")) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        });
+
+        const roomName = "default_room";  // Replace with dynamic room ID if needed
+        const socket = new WebSocket(`ws://${window.location.host}/ws/editor/${roomName}/`);
+
+        socket.onopen = function () {
+            console.log("WebSocket connected");
+        }
+    
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            editor.setValue(data.code, -1);
+        };
+
+        function sendCodeUpdate() {
+            const code = editor.getValue();
+            socket.send(JSON.stringify({ code: code  }));
+        }
+
+        editor.session.on('change', sendCodeUpdate);
+    </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
